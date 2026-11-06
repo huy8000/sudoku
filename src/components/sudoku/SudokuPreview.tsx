@@ -81,7 +81,7 @@ export default class SudokuPreview extends React.PureComponent<{
         onKeyDown={onKeyDown}
       >
         <div
-          className="relative bg-gray-100 dark:bg-gray-700 rounded-sm"
+          className="relative bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden border border-stone-200/80 dark:border-zinc-700/80 shadow-xs hover:shadow-md hover:border-teal-500/50 hover:scale-[1.02] transition-all duration-200"
           style={{
             height: containerHeight,
             width: containerWidth,
@@ -89,8 +89,8 @@ export default class SudokuPreview extends React.PureComponent<{
             lineHeight: 1,
           }}
         >
-          <div className="absolute z-10 top-0 left-0 w-full h-full flex items-center justify-center">
-            <div style={{fontSize: size / 3}} className="font-bold text-black dark:text-white opacity-80">
+          <div className="absolute z-10 top-0 left-0 w-full h-full flex items-center justify-center pointer-events-none">
+            <div style={{fontSize: size / 3.2}} className="font-extrabold font-mono text-stone-900 dark:text-zinc-100 opacity-80 drop-shadow-sm">
               {id}
             </div>
           </div>
@@ -102,7 +102,7 @@ export default class SudokuPreview extends React.PureComponent<{
                   return n !== 0 ? (
                     <div
                       key={x}
-                      className="text-black dark:text-white"
+                      className="text-stone-700 dark:text-zinc-300 font-medium font-mono"
                       style={{
                         position: "absolute",
                         left: xSection * (x + 0.5) + "%",
@@ -118,7 +118,7 @@ export default class SudokuPreview extends React.PureComponent<{
             );
           })}
           {this.props.darken ? (
-            <div className="absolute z-20 top-0 left-0 w-full h-full bg-black opacity-20 group-hover:opacity-0 transition-opacity duration-300" />
+            <div className="absolute z-20 top-0 left-0 w-full h-full bg-stone-900/10 dark:bg-black/30 group-hover:opacity-0 transition-opacity duration-200 pointer-events-none" />
           ) : null}
         </div>
       </div>

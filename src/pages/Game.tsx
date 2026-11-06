@@ -24,8 +24,8 @@ import {throttle} from "lodash";
 import {TimerProvider} from "src/context/TimerContext";
 import {useEffect} from "react";
 import {CellCoordinates, SimpleSudoku} from "src/lib/engine/types";
-import {DarkModeButton} from "src/components/DarkModeButton";
-import LanguageSelector from "src/components/LanguageSelector";
+import {SettingsModal} from "src/components/SettingsModal";
+import {ConfirmModal} from "src/components/ConfirmModal";
 import {useTranslation} from "react-i18next";
 import {
   INITIAL_USER_PREFERENCES_STATE,
@@ -49,7 +49,11 @@ function PauseButton({
 }) {
   const {t} = useTranslation();
   return (
-    <Button disabled={disabled} onClick={paused ? continueGame : pauseGame}>
+    <Button
+      disabled={disabled}
+      onClick={paused ? continueGame : pauseGame}
+      className="px-2 py-0.5 text-xs font-semibold rounded-lg bg-stone-100 hover:bg-stone-200 dark:bg-zinc-700 dark:hover:bg-zinc-650 text-stone-700 dark:text-zinc-200 border-none shadow-none ml-1"
+    >
       {paused ? t("continue") : t("pause")}
     </Button>
   );
@@ -62,26 +66,46 @@ const ClearGameButton: React.FC<{
   disabled: boolean;
 }> = ({clearGame, pauseGame, continueGame, disabled}) => {
   const {t} = useTranslation();
-  const clearGameLocal = async () => {
+  const [showConfirm, setShowConfirm] = React.useState(false);
+
+  const handleClick = () => {
     pauseGame();
-    // Wait 50ms to make sure the game is shown as paused when in the confirm dialog.
-    await new Promise((resolve) => setTimeout(resolve, 30));
-    const areYouSure = confirm(t("confirm_clear"));
-    if (!areYouSure) {
-      continueGame();
-      return;
-    }
+    setShowConfirm(true);
+  };
+
+  const handleCancel = () => {
+    setShowConfirm(false);
+    continueGame();
+  };
+
+  const handleConfirm = async () => {
+    setShowConfirm(false);
     clearGame();
     // Wait 100ms as we have to wait until the updateTimer is called (should normally take 1/60 second)
-    // This is certainly not ideal and should be fixed there.
     await new Promise((resolve) => setTimeout(resolve, 100));
     continueGame();
   };
 
   return (
-    <Button disabled={disabled} onClick={clearGameLocal}>
-      {t("clear")}
-    </Button>
+    <>
+      <Button
+        disabled={disabled}
+        onClick={handleClick}
+        className="text-xs sm:text-sm font-medium px-3 py-2 text-stone-600 dark:text-zinc-300 hover:text-stone-900 dark:hover:text-white hover:bg-stone-100 dark:hover:bg-zinc-800 border-transparent shadow-none"
+      >
+        {t("clear")}
+      </Button>
+
+      <ConfirmModal
+        isOpen={showConfirm}
+        message={t("confirm_clear")}
+        confirmText={t("confirm", "确定")}
+        cancelText={t("cancel", "取消")}
+        isDestructive={true}
+        onConfirm={handleConfirm}
+        onCancel={handleCancel}
+      />
+    </>
   );
 };
 
@@ -98,7 +122,10 @@ const NewGameButton: React.FC = () => {
   };
 
   return (
-    <Button className="bg-teal-600 dark:bg-teal-600 text-white" onClick={pauseAndChoose}>
+    <Button
+      className="bg-teal-600 hover:bg-teal-700 dark:bg-teal-600 text-white font-medium text-xs sm:text-sm px-3.5 py-2 rounded-xl shadow-xs border-teal-600"
+      onClick={pauseAndChoose}
+    >
       {t("new_game")}
     </Button>
   );
@@ -153,7 +180,7 @@ const NextSudokuButton: React.FC<{gameState: GameState; setDisableAutoSync: (dis
           {t("collection_finished", {collection: collectionName})}
         </p>
         <Link to="/select-game" className="w-full">
-          <Button className="bg-teal-700 text-white w-full">{t("select_new_sudoku")}</Button>
+          <Button className="bg-teal-600 hover:bg-teal-700 text-white w-full rounded-xl py-2.5 font-semibold shadow-xs">{t("select_new_sudoku")}</Button>
         </Link>
       </div>
     );
@@ -172,7 +199,7 @@ const NextSudokuButton: React.FC<{gameState: GameState; setDisableAutoSync: (dis
 
   return (
     <Link to="/" search={nextSudokuParams} className="w-full" onClick={handleClick}>
-      <Button className="bg-teal-700 text-white w-full">
+      <Button className="bg-teal-600 hover:bg-teal-700 text-white w-full rounded-xl py-2.5 font-semibold shadow-xs">
         {t("select_next_sudoku", {
           collection: collectionName,
           sudokuIndex: nextSudokuParams.sudokuIndex,
@@ -222,12 +249,21 @@ const ShareButton: React.FC<{
   return (
     <button
       aria-label={t("share")}
-      className="text-gray-700 dark:text-white hover:cursor-pointer p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md border-none bg-transparent transition-colors"
+      className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-stone-600 dark:text-zinc-300 hover:text-teal-700 dark:hover:text-teal-400 hover:bg-stone-200/60 dark:hover:bg-zinc-800 rounded-lg transition-colors border-none bg-transparent cursor-pointer"
       data-testid="share-sudoku"
       onClick={handleShare}
       type="button"
     >
-      {copied ? t("copied") : `🔗 ${t("share")}`}
+      {copied ? (
+        <span className="text-teal-600 dark:text-teal-400 font-semibold">✓ {t("copied")}</span>
+      ) : (
+        <>
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+          </svg>
+          <span>{t("share")}</span>
+        </>
+      )}
     </button>
   );
 };
@@ -236,18 +272,24 @@ const CenteredContinueButton: React.FC<{visible: boolean; onClick: () => void}> 
   <div
     onClick={onClick}
     data-testid="continue-overlay"
-    className={`${visible ? "flex" : "hidden"} justify-center items-center w-full h-full absolute z-30 hover:cursor-pointer`}
+    className={`${visible ? "flex" : "hidden"} flex-col justify-center items-center w-full h-full absolute z-30 inset-0 bg-stone-900/40 dark:bg-black/60 backdrop-blur-xs hover:cursor-pointer transition-all duration-200`}
   >
-    <>
-      <div className="bg-teal-500 rounded-full w-20 h-20 flex justify-center items-center transition-transform duration-200 ease-out hover:scale-110 relative">
-        <div className="absolute w-0 h-0 border-l-[30px] border-l-white border-t-[20px] border-t-transparent border-b-[20px] border-b-transparent translate-x-[5px]"></div>
-      </div>
-    </>
+    <div className="bg-teal-600 dark:bg-teal-500 rounded-full w-20 h-20 flex justify-center items-center shadow-2xl transition-transform duration-200 ease-out hover:scale-110 active:scale-95 group">
+      <svg className="w-9 h-9 text-white translate-x-0.5 fill-current" viewBox="0 0 24 24">
+        <path d="M8 5v14l11-7z" />
+      </svg>
+    </div>
+    <span className="text-white text-xs font-semibold mt-3 tracking-wider uppercase opacity-90 drop-shadow-md">
+      点击继续
+    </span>
   </div>
 );
 
 const DifficultyShow = ({children, ...props}: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className="text-gray-800 dark:text-white font-medium capitalize" {...props}>
+  <div
+    className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-teal-50 dark:bg-teal-950/70 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/80 capitalize tracking-wide shadow-2xs"
+    {...props}
+  >
     {children}
   </div>
 );
@@ -302,84 +344,6 @@ function getSearchNumber(search: Record<string, unknown>, name: string) {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : undefined;
 }
-
-const SettingsAndInformation = () => {
-  const {
-    state,
-    toggleShowHints,
-    toggleShowOccurrences,
-    toggleShowCircleMenu,
-    toggleShowWrongEntries,
-    toggleShowConflicts,
-  } = useUserPreferences();
-  const {t} = useTranslation();
-
-  return (
-    <div className="text-gray-800 dark:text-gray-100">
-      <div className="grid gap-4">
-        <div className="md:block hidden">
-          <h2 className="mb-2 text-3xl font-bold text-gray-900 dark:text-white">{t("shortcuts")}</h2>
-          <div className="grid gap-2">
-            <ul className="list-disc pl-6 text-gray-700 dark:text-gray-300">
-              <li>{t("arrow_keys")}</li>
-              <li>{t("number_keys")}</li>
-              <li>{t("backspace")}</li>
-              <li>{t("escape")}</li>
-              <li>{t("hint")}</li>
-              <li>{t("note_mode")}</li>
-              <li>{t("undo")}</li>
-              <li>{t("redo")}</li>
-              <li>{t("copy_paste_notes")}</li>
-            </ul>
-          </div>
-        </div>
-        <div>
-          <h2 className="mb-2 text-3xl font-bold text-gray-900 dark:text-white">{t("settings")}</h2>
-          <div className="grid gap-2 text-gray-700 dark:text-gray-300">
-            <Checkbox id="generated_notes" checked={state.showHints} onChange={toggleShowHints}>
-              {t("show_auto_notes")}
-            </Checkbox>
-            <Checkbox id="highlight_wrong_entries" checked={state.showWrongEntries} onChange={toggleShowWrongEntries}>
-              {t("highlight_wrong_entries")}
-            </Checkbox>
-            <Checkbox id="highlight_conflicts" checked={state.showConflicts} onChange={toggleShowConflicts}>
-              {t("highlight_conflicts")}
-            </Checkbox>
-            <Checkbox id="circle_menu" checked={state.showCircleMenu} onChange={toggleShowCircleMenu}>
-              {t("show_circle_menu")}
-            </Checkbox>
-            <Checkbox id="show_occurrences" checked={state.showOccurrences} onChange={toggleShowOccurrences}>
-              {t("show_occurrences")}
-            </Checkbox>
-          </div>
-        </div>
-        <div>
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">{t("about")}</h2>
-          <p className="text-gray-600 dark:text-gray-300">
-            {t("about_text")}{" "}
-            <a target="_blank" className="underline" href="https://github.com/TN1ck/super-sudoku" rel="noreferrer">
-              Github
-            </a>
-            .{" "}
-            <a href="https://tn1ck.com" target="_blank" className="hover:underline" rel="noreferrer">
-              {t("created_by")}
-            </a>
-            {t("report_issue")}{" "}
-            <a
-              target="_blank"
-              className="underline"
-              href="https://github.com/TN1ck/super-sudoku/issues"
-              rel="noreferrer"
-            >
-              Github
-            </a>
-            .
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 const GameInner: React.FC<{
   sudokuState: SudokuState;
@@ -468,6 +432,26 @@ const GameInner: React.FC<{
     };
   }, [onVisibilityChange]);
 
+  const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
+  const wasRunningRef = React.useRef(false);
+
+  const openSettings = React.useCallback(() => {
+    if (game.state === GameStateMachine.running) {
+      wasRunningRef.current = true;
+      pauseGame();
+    } else {
+      wasRunningRef.current = false;
+    }
+    setIsSettingsOpen(true);
+  }, [game.state, pauseGame]);
+
+  const closeSettings = React.useCallback(() => {
+    setIsSettingsOpen(false);
+    if (wasRunningRef.current && game.state === GameStateMachine.paused) {
+      continueGame();
+    }
+  }, [game.state, continueGame]);
+
   const pausedGame = game.state === GameStateMachine.paused;
   const activeCell = game.activeCellCoordinates
     ? sudoku.find((s) => {
@@ -476,8 +460,8 @@ const GameInner: React.FC<{
     : undefined;
 
   return (
-    <Container>
-      <div>
+    <div className="w-full min-h-[calc(100vh-1rem)] flex flex-col justify-center items-center py-4 sm:py-6 px-4">
+      <div className="w-full max-w-[500px] sm:max-w-[520px] flex flex-col gap-3.5">
         <Shortcuts
           gameState={game.state}
           continueGame={continueGame}
@@ -498,125 +482,128 @@ const GameInner: React.FC<{
           clipboardNotes={game.clipboardNotes}
           copyNotes={copyNotes}
         />
-        <header className="flex justify-between sm:items-center mt-4">
-          <div className="flex text-gray-800 dark:text-white flex-col sm:flex-row sm:justify-end sm:items-center gap-2">
+        <header className="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-stone-200/80 dark:border-zinc-800">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <a
               href="/games/"
-              className="inline-flex items-center gap-1 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-teal-700 dark:hover:text-teal-400 transition-colors mr-1"
+              className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-full bg-stone-200/60 dark:bg-zinc-800 text-stone-700 dark:text-zinc-300 hover:text-teal-700 dark:hover:text-teal-400 hover:bg-stone-200 dark:hover:bg-zinc-700 transition-all shadow-2xs"
               title="返回游戏列表"
             >
-              ← heyhuyu
+              <span>←</span>
+              <span>heyhuyu</span>
             </a>
-            <div className="flex gap-2 items-center">
-              <DifficultyShow data-testid="current-game-label">{`${collectionName} #${game.sudokuIndex + 1}`}</DifficultyShow>
-              <ShareButton gameState={game} sudokuState={sudokuState} />
-            </div>
-            <div className="hidden sm:block text-gray-400 dark:text-gray-600">{"|"}</div>
-            <GameTimer />
+            <DifficultyShow data-testid="current-game-label">{`${collectionName} #${game.sudokuIndex + 1}`}</DifficultyShow>
+            <ShareButton gameState={game} sudokuState={sudokuState} />
           </div>
-          <div className="text-gray-900 dark:text-white text-lg sm:text-2xl font-bold flex items-center gap-2">{t("super_sudoku")}</div>
-          <div className="flex">
-            <div className="flex gap-2 flex-col justify-end items-end sm:flex-row">
-              <div className="flex gap-2">
-                <LanguageSelector />
-                <DarkModeButton />
-                <ClearGameButton
-                  pauseGame={pauseGame}
-                  continueGame={continueGame}
-                  disabled={game.won || game.state === GameStateMachine.paused}
-                  clearGame={() => {
-                    const simpleSudoku = cellsToSimpleSudoku(sudokuState.current);
-                    const solved = solve(simpleSudoku);
-                    if (solved.sudoku) {
-                      setSudoku(simpleSudoku, solved.sudoku);
-                    }
-                    resetGame();
-                  }}
-                />
-              </div>
-              <div className="flex gap-2">
-                <PauseButton
-                  disabled={game.won}
-                  paused={game.state === GameStateMachine.paused}
-                  continueGame={continueGame}
-                  pauseGame={pauseGame}
-                />
-                <NewGameButton />
-              </div>
+
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white/90 dark:bg-zinc-800/90 border border-stone-200/80 dark:border-zinc-700/80 shadow-xs">
+            <span className="text-xs text-stone-400 dark:text-zinc-500">⏱</span>
+            <div className="font-mono text-sm font-semibold text-stone-800 dark:text-zinc-100">
+              <GameTimer />
             </div>
+            <PauseButton
+              disabled={game.won}
+              paused={game.state === GameStateMachine.paused}
+              continueGame={continueGame}
+              pauseGame={pauseGame}
+            />
+          </div>
+
+          <div className="flex items-center gap-1.5">
+            <ClearGameButton
+              pauseGame={pauseGame}
+              continueGame={continueGame}
+              disabled={game.won || game.state === GameStateMachine.paused}
+              clearGame={() => {
+                const simpleSudoku = cellsToSimpleSudoku(sudokuState.current);
+                const solved = solve(simpleSudoku);
+                if (solved.sudoku) {
+                  setSudoku(simpleSudoku, solved.sudoku);
+                }
+                resetGame();
+              }}
+            />
+            <NewGameButton />
+            <button
+              type="button"
+              data-testid="settings-button"
+              aria-label={t("settings")}
+              onClick={openSettings}
+              className="inline-flex items-center justify-center h-9 w-9 rounded-xl bg-white dark:bg-zinc-800 border border-stone-200/80 dark:border-zinc-700/80 text-stone-700 dark:text-zinc-200 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-stone-50 dark:hover:bg-zinc-700/80 transition-all shadow-xs cursor-pointer"
+              title={t("settings")}
+            >
+              <svg className="w-4.5 h-4.5 transition-transform duration-300 hover:rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </button>
           </div>
         </header>
-        <div className="flex gap-4 flex-col md:flex-row">
-          <main className="mt-4 flex-grow md:min-w-96 w-full">
-            <Sudoku
-              showWrongEntries={userPreferencesState.showWrongEntries && game.state === GameStateMachine.running}
-              showConflicts={userPreferencesState.showConflicts && game.state === GameStateMachine.running}
-              notesMode={game.notesMode}
-              shouldShowMenu={
-                game.showMenu && userPreferencesState.showCircleMenu && game.state === GameStateMachine.running
-              }
-              sudoku={game.state === GameStateMachine.paused ? emptyGrid : sudoku}
-              showMenu={showMenu}
-              hideMenu={hideMenu}
-              selectCell={selectCell}
-              showHints={userPreferencesState.showHints && game.state === GameStateMachine.running}
-              activeCell={game.state === GameStateMachine.running ? activeCell : undefined}
-              setNumber={setNumber}
-              setNotes={setNotes}
-              clearNumber={clearCell}
-            >
-              {game.won && (
-                <div className="absolute top-0 bottom-0 right-0 left-0 z-30 flex items-center justify-center rounded-sm bg-white dark:bg-black dark:bg-opacity-80 bg-opacity-80 text-black dark:text-white">
-                  <div className="grid gap-8">
-                    <div className="flex justify-center text-2xl">{t("congrats")}</div>
-                    <div className="text-md flex justify-center">
-                      <div className="grid">
-                        <div className="flex justify-center">
-                          {t(game.timesSolved === 1 ? "solved_time" : "solved_times", {count: game.timesSolved})}
-                        </div>
-                        <div className="flex justify-center">
-                          <div>
-                            {game.previousTimes.length > 0 && (
-                              <div>{t("best_time", {time: formatDuration(Math.min(...game.previousTimes))})}</div>
-                            )}
-                            <div>{t("this_time", {time: formatDuration(game.secondsPlayed)})}</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <NextSudokuButton gameState={game} setDisableAutoSync={setDisableAutoSync} />
-                  </div>
-                </div>
-              )}
 
-              <CenteredContinueButton visible={pausedGame && !game.won} onClick={continueGame} />
-            </Sudoku>
-          </main>
-          <div className="grid gap-4 mt-4">
-            <SudokuMenuNumbers
-              notesMode={game.notesMode}
-              showOccurrences={userPreferencesState.showOccurrences}
-              activeCell={game.activeCellCoordinates}
-              sudoku={sudokuState.current}
-              showHints={userPreferencesState.showHints}
-              setNumber={setNumber}
-              setNotes={setNotes}
-            />
-            <SudokuMenuControls
-              notesMode={game.notesMode}
-              activeCellCoordinates={game.activeCellCoordinates ?? {x: 0, y: 0}}
-              clearCell={clearCell}
-              activateNotesMode={activateNotesMode}
-              deactivateNotesMode={deactivateNotesMode}
-              getHint={getHint}
-              canUndo={canUndo}
-              undo={undo}
-            />
-            <SettingsAndInformation />
-          </div>
+        {/* Hero Board - Exactly Centered! */}
+        <main className="w-full">
+          <Sudoku
+            showWrongEntries={userPreferencesState.showWrongEntries && game.state === GameStateMachine.running}
+            showConflicts={userPreferencesState.showConflicts && game.state === GameStateMachine.running}
+            notesMode={game.notesMode}
+            shouldShowMenu={
+              game.showMenu && game.state === GameStateMachine.running
+            }
+            sudoku={game.state === GameStateMachine.paused ? emptyGrid : sudoku}
+            showMenu={showMenu}
+            hideMenu={hideMenu}
+            selectCell={selectCell}
+            showHints={userPreferencesState.showHints && game.state === GameStateMachine.running}
+            showOccurrences={userPreferencesState.showOccurrences}
+            toggleNotesMode={() => (game.notesMode ? deactivateNotesMode() : activateNotesMode())}
+            activeCell={game.state === GameStateMachine.running ? activeCell : undefined}
+            setNumber={setNumber}
+            setNotes={setNotes}
+            clearNumber={clearCell}
+          >
+            {game.won && (
+              <div className="absolute inset-0 z-30 flex items-center justify-center rounded-2xl bg-stone-900/60 dark:bg-black/75 backdrop-blur-sm p-4 text-stone-900 dark:text-white">
+                <div className="w-full max-w-xs bg-white dark:bg-zinc-800 rounded-2xl p-6 shadow-2xl border border-stone-200 dark:border-zinc-700 text-center space-y-4">
+                  <div className="text-3xl">🎉</div>
+                  <div className="text-xl font-bold tracking-tight text-stone-900 dark:text-white">{t("congrats")}</div>
+                  <div className="py-3 px-4 bg-stone-50 dark:bg-zinc-750 rounded-xl space-y-1.5 text-sm border border-stone-100 dark:border-zinc-700/60">
+                    <div className="text-stone-500 dark:text-zinc-400 text-xs">
+                      {t(game.timesSolved === 1 ? "solved_time" : "solved_times", {count: game.timesSolved})}
+                    </div>
+                    <div className="font-mono text-lg font-bold text-teal-600 dark:text-teal-400">
+                      {t("this_time", {time: formatDuration(game.secondsPlayed)})}
+                    </div>
+                    {game.previousTimes.length > 0 && (
+                      <div className="text-xs text-stone-400 dark:text-zinc-500">
+                        {t("best_time", {time: formatDuration(Math.min(...game.previousTimes))})}
+                      </div>
+                    )}
+                  </div>
+                  <NextSudokuButton gameState={game} setDisableAutoSync={setDisableAutoSync} />
+                </div>
+              </div>
+            )}
+
+            <CenteredContinueButton visible={pausedGame && !game.won} onClick={continueGame} />
+          </Sudoku>
+        </main>
+
+        {/* Action Controls - Cleanly centered beneath board */}
+        <div className="w-full">
+          <SudokuMenuControls
+            notesMode={game.notesMode}
+            activeCellCoordinates={game.activeCellCoordinates ?? {x: 0, y: 0}}
+            clearCell={clearCell}
+            activateNotesMode={activateNotesMode}
+            deactivateNotesMode={deactivateNotesMode}
+            getHint={getHint}
+            canUndo={canUndo}
+            undo={undo}
+          />
         </div>
+        <SettingsModal isOpen={isSettingsOpen} onClose={closeSettings} />
       </div>
-    </Container>
+    </div>
   );
 };
 

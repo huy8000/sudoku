@@ -150,19 +150,28 @@ test("supports number entry, erase, undo, redo, notes, hints, and keyboard short
 test("persists game settings, dark mode, and language selection", async ({page}) => {
   await openGame(page);
 
+  await page.getByTestId("settings-button").click();
   await page.locator("#generated_notes").check();
+  await page.getByTestId("close-settings-button").click();
   await expect(cellNotes(page, 5, 0)).toContainText("1");
 
+  await page.getByTestId("settings-button").click();
   await page.locator("#show_occurrences").check();
+  await page.getByTestId("close-settings-button").click();
+  await selectCell(page, 5, 0);
   await expect(page.getByTestId("sudoku-number-occurrences-5")).toBeVisible();
 
+  await page.getByTestId("settings-button").click();
   await page.locator("#highlight_conflicts").uncheck();
   await page.locator("#highlight_wrong_entries").check();
+  await page.getByTestId("close-settings-button").click();
   await selectCell(page, 5, 0);
   await page.getByRole("button", {name: "Set 2"}).click();
   await expect(cell(page, 5, 0)).toHaveAttribute("data-cell-conflict", "true");
 
+  await page.getByTestId("settings-button").click();
   await page.locator("#circle_menu").uncheck();
+  await page.getByTestId("close-settings-button").click();
   await selectCell(page, 7, 0);
   await expect(page.getByTestId("sudoku-menu-circle")).toHaveCount(0);
 
@@ -175,6 +184,7 @@ test("persists game settings, dark mode, and language selection", async ({page})
   });
 
   await page.reload();
+  await page.getByTestId("settings-button").click();
   await expect(page.locator("#generated_notes")).toBeChecked();
   await expect(page.locator("#highlight_wrong_entries")).toBeChecked();
   await expect(page.locator("#highlight_conflicts")).not.toBeChecked();
@@ -186,6 +196,7 @@ test("persists game settings, dark mode, and language selection", async ({page})
   await expect.poll(() => page.evaluate(() => localStorage.getItem("darkMode"))).toBe("true");
 
   await page.getByLabel("Select language").selectOption("es");
+  await page.getByTestId("close-settings-button").click();
   await expect(page.getByRole("button", {name: "Nuevo juego"})).toBeVisible();
   await expect.poll(() => page.evaluate(() => localStorage.getItem("language"))).toBe("es");
 
@@ -248,8 +259,10 @@ test("creates and solves a difficult custom sudoku", async ({page}) => {
   await page.getByTestId("sudoku-preview-1").click();
   await expect(page.getByTestId("current-game-label")).toHaveText(`${customCollectionName} #1`);
   await continueIfPaused(page);
+  await page.getByTestId("settings-button").click();
   await page.locator("#circle_menu").uncheck();
   await expect(page.locator("#circle_menu")).not.toBeChecked();
+  await page.getByTestId("close-settings-button").click();
 
   await enterSudokuValues(page, ISSUE_33_CUSTOM_SOLUTION, (_, index) => ISSUE_33_CUSTOM_PUZZLE[index] === "0");
 

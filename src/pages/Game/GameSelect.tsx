@@ -13,12 +13,17 @@ import {localStoragePlayedSudokuRepository, StoredPlayedSudokuState} from "src/l
 import {Collection, translateCollectionName} from "src/lib/database/collections";
 import NewSudoku from "./NewSudoku";
 import {useTranslation} from "react-i18next";
+import {ConfirmModal} from "src/components/ConfirmModal";
+import clsx from "clsx";
 
 const TabItem = ({active, children, ...props}: React.ButtonHTMLAttributes<HTMLButtonElement> & {active: boolean}) => (
   <button
-    className={`px-1 xs:px-2 sm:px-4 text-xs sm:text-sm md:text-base py-2 pointer capitalize rounded-sm border-none hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors ${
-      active ? "bg-white text-black shadow-sm dark:bg-gray-600 dark:text-white" : "bg-transparent text-gray-700 dark:text-gray-300"
-    }`}
+    className={clsx(
+      "px-3.5 py-1.5 text-xs sm:text-sm font-semibold capitalize rounded-xl transition-all whitespace-nowrap border-none cursor-pointer",
+      active
+        ? "bg-white text-stone-900 shadow-xs dark:bg-zinc-700 dark:text-white"
+        : "bg-transparent text-stone-600 dark:text-zinc-400 hover:text-stone-900 dark:hover:text-white hover:bg-stone-300/40 dark:hover:bg-zinc-700/40"
+    )}
     {...props}
   >
     {children}
@@ -113,16 +118,9 @@ const SudokuToSelect = ({
   const finished = localSudoku && localSudoku.game.won;
   const navigate = useNavigate();
   const {t} = useTranslation();
+  const [showConfirm, setShowConfirm] = useState(false);
 
-  const choose = () => {
-    if (finished) {
-      const areYouSure = confirm(
-        "Are you sure? This will restart the sudoku and reset the timer. It will continue to say that you solved it.",
-      );
-      if (!areYouSure) {
-        return;
-      }
-    }
+  const proceedNavigate = () => {
     navigate({
       to: "/",
       search: {
@@ -133,30 +131,38 @@ const SudokuToSelect = ({
     });
   };
 
+  const choose = () => {
+    if (finished) {
+      setShowConfirm(true);
+      return;
+    }
+    proceedNavigate();
+  };
+
   const sudokuContainerRef = React.useRef(null);
   const size = useElementWidth(sudokuContainerRef);
 
   return (
-    <div className="relative" ref={sudokuContainerRef}>
+    <div className="relative group" ref={sudokuContainerRef}>
       {unfinished || finished ? (
-        <div className="pointer-events-none absolute left-2 rounded-sm bottom-2 z-10 max-w-min bg-gray-900/90 dark:bg-gray-900/95 backdrop-blur-sm px-2 py-1 text-xs text-white md:text-base">
+        <div className="pointer-events-none absolute left-2 rounded-xl bottom-2 z-10 max-w-min bg-stone-900/90 dark:bg-black/90 backdrop-blur-md px-2.5 py-1.5 text-xs text-white shadow-lg">
           <div>
-            <div className="whitespace-nowrap">{`
+            <div className="whitespace-nowrap font-medium">{`
               ${unfinished ? t("play_time") : t("last_time")}
               ${formatDuration(localSudoku.game.secondsPlayed)}
             `}</div>
             {localSudoku.game.previousTimes.length > 0 && (
-              <div className="whitespace-nowrap">{t("best_time", {
+              <div className="whitespace-nowrap text-stone-300">{t("best_time", {
                 time: formatDuration(Math.min(...localSudoku.game.previousTimes)),
               })}</div>
             )}
             {localSudoku.game.timesSolved > 0 && (
-              <div>{t(localSudoku.game.timesSolved === 1 ? "solved_time" : "solved_times", {
+              <div className="text-teal-400 font-semibold">{t(localSudoku.game.timesSolved === 1 ? "solved_time" : "solved_times", {
                 count: localSudoku.game.timesSolved,
               })}</div>
             )}
-            {unfinished && <div>{t("continue")}</div>}
-            {finished && <div>{t("restart?")}</div>}
+            {unfinished && <div className="text-amber-400 font-semibold mt-0.5">{t("continue")}</div>}
+            {finished && <div className="text-stone-300 mt-0.5">{t("restart?")}</div>}
           </div>
         </div>
       ) : null}
@@ -164,7 +170,7 @@ const SudokuToSelect = ({
         <div className="inline-block relative w-full">
           <div style={{marginTop: "100%"}} />
           <div className="absolute top-0 left-0 w-full h-full">
-            <div className="w-full h-full bg-gray-300 dark:bg-gray-900 rounded-sm" />
+            <div className="w-full h-full bg-stone-200 dark:bg-zinc-800 rounded-2xl animate-pulse" />
           </div>
         </div>
       )}
@@ -177,6 +183,19 @@ const SudokuToSelect = ({
           darken
         />
       )}
+
+      <ConfirmModal
+        isOpen={showConfirm}
+        message={t("restart_completed_confirm", "确定要重新开始这个数独吗？这将重置计时器，但依然会记录你已通关。")}
+        confirmText={t("confirm", "确定")}
+        cancelText={t("cancel", "取消")}
+        isDestructive={false}
+        onConfirm={() => {
+          setShowConfirm(false);
+          proceedNavigate();
+        }}
+        onCancel={() => setShowConfirm(false)}
+      />
     </div>
   );
 };
@@ -253,17 +272,18 @@ const GameSelect: React.FC = () => {
   };
 
   const [showNewSudokuComponent, setShowNewSudokuComponent] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
   const removeCollectionLocal = () => {
     if (isBaseCollectionLocal) {
       alert(t("cannot_delete_base_collection"));
       return;
     }
-    const areYouSure = confirm(
-      t("confirm_delete_collection", {collection: translateCollectionName(activeCollection.name)}),
-    );
-    if (!areYouSure) {
-      return;
-    }
+    setShowDeleteConfirm(true);
+  };
+
+  const handleDeleteConfirmed = () => {
+    setShowDeleteConfirm(false);
     removeCollection(activeCollection.id);
     setActiveCollectionId(collections[0].id);
     setPage(0);
@@ -273,8 +293,8 @@ const GameSelect: React.FC = () => {
 
   return (
     <div className="mt-8">
-      <div className="flex justify-between items-center  mb-8">
-        <div className="flex flex-wrap gap-2">
+      <div className="flex justify-center mb-8 overflow-x-auto pb-1">
+        <div className="inline-flex flex-wrap gap-1.5 p-1.5 bg-stone-200/70 dark:bg-zinc-800/80 rounded-2xl border border-stone-200/80 dark:border-zinc-700/60 shadow-inner">
           {collections.map((collection) => (
             <TabItem
               key={collection.id}
@@ -323,6 +343,16 @@ const GameSelect: React.FC = () => {
       )}
       <GameIndex pageSudokus={pageSudokus} pageStart={pageStart} sudokuCollectionName={activeCollection.id} />
       {pageCount > 1 && <PageSelector page={page} pageCount={pageCount} setPage={setPage} />}
+
+      <ConfirmModal
+        isOpen={showDeleteConfirm}
+        message={t("confirm_delete_collection", {collection: translateCollectionName(activeCollection.name)})}
+        confirmText={t("confirm", "确定")}
+        cancelText={t("cancel", "取消")}
+        isDestructive={true}
+        onConfirm={handleDeleteConfirmed}
+        onCancel={() => setShowDeleteConfirm(false)}
+      />
     </div>
   );
 };

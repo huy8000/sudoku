@@ -17,27 +17,33 @@ const SelectGame = () => {
   };
 
   return (
-    <Container className="mt-4">
+    <Container className="py-6">
       <div className="mb-8 flex flex-col gap-2">
-        <div className="flex gap-4 items-center justify-between">
+        <div className="flex gap-4 items-center justify-between pb-4 border-b border-stone-200/70 dark:border-zinc-800">
           <div className="flex items-center gap-3">
             <a
               href="/games/"
-              className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-teal-700 dark:hover:text-teal-400 transition-colors"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full bg-stone-200/60 dark:bg-zinc-800 text-stone-700 dark:text-zinc-300 hover:text-teal-700 dark:hover:text-teal-400 hover:bg-stone-200 dark:hover:bg-zinc-700 transition-all"
               title="返回游戏列表"
             >
-              ← heyhuyu
+              <span>←</span>
+              <span>heyhuyu</span>
             </a>
-            <h1 className="text-2xl text-gray-900 dark:text-white font-bold">{t("select_game_title")}</h1>
+            <h1 className="text-xl sm:text-2xl text-stone-900 dark:text-white font-bold tracking-tight">
+              {t("select_game_title")}
+            </h1>
           </div>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
             <DarkModeButton />
-            <Button className="bg-teal-600 dark:bg-teal-600 text-white flex-shrink-0" onClick={goBack}>
-              {"◀ " + t("go_back")}
+            <Button
+              className="bg-teal-600 hover:bg-teal-700 dark:bg-teal-600 text-white rounded-xl text-sm font-semibold flex-shrink-0 shadow-xs border-teal-600"
+              onClick={goBack}
+            >
+              {"← " + t("go_back")}
             </Button>
           </div>
         </div>
-        <p className="text-gray-600 dark:text-gray-400">{t("select_game_subtitle")}</p>
+        <p className="text-stone-500 dark:text-zinc-400 text-sm">{t("select_game_subtitle")}</p>
       </div>
       <GameSelect />
     </Container>

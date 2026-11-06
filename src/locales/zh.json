@@ -20,7 +20,7 @@
   "show_auto_notes": "显示自动生成的笔记",
   "highlight_wrong_entries": "高亮错误输入",
   "highlight_conflicts": "高亮冲突",
-  "show_circle_menu": "点击单元格时显示圆形菜单（仅桌面端）",
+  "show_circle_menu": "点击单元格时显示悬浮快捷菜单（仅桌面端）",
   "show_occurrences": "在数字按钮上显示出现次数",
   "about": "关于",
   "about_text": "这款数独应用将始终免费、无广告、无追踪。源码可在以下地址获取：",
@@ -63,5 +63,8 @@
   "add_new_collection": "+ 新建合集",
   "enter_new_collection_name": "请输入新数独合集名称：",
   "confirm_clear": "确定要重开这局吗？你的进度将会丢失。",
-  "copied": "已复制"
+  "copied": "已复制",
+  "confirm": "确定",
+  "cancel": "取消",
+  "restart_completed_confirm": "确定要重新开始这个数独吗？这将重置计时器，但依然会记录你已通关。"
 }

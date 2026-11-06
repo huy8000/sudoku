@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0d9488" />
+      <stop offset="100%" stop-color="#0f766e" />
+    </linearGradient>
+    <linearGradient id="cellGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2dd4bf" />
+      <stop offset="100%" stop-color="#14b8a6" />
+    </linearGradient>
+  </defs>
+
+  <!-- Squircle App Background -->
+  <rect width="128" height="128" rx="28" fill="url(#bgGrad)" />
+
+  <!-- Sudoku Grid Box -->
+  <rect x="22" y="22" width="84" height="84" rx="10" fill="#ffffff" fill-opacity="0.08" stroke="#ffffff" stroke-width="3" stroke-opacity="0.8" />
+
+  <!-- Highlighted Center Cell -->
+  <rect x="50" y="50" width="28" height="28" rx="5" fill="url(#cellGrad)" />
+
+  <!-- Subgrid Lines -->
+  <!-- Vertical lines -->
+  <line x1="50" y1="22" x2="50" y2="106" stroke="#ffffff" stroke-width="2.5" stroke-opacity="0.45" stroke-linecap="round" />
+  <line x1="78" y1="22" x2="78" y2="106" stroke="#ffffff" stroke-width="2.5" stroke-opacity="0.45" stroke-linecap="round" />
+  <!-- Horizontal lines -->
+  <line x1="22" y1="50" x2="106" y2="50" stroke="#ffffff" stroke-width="2.5" stroke-opacity="0.45" stroke-linecap="round" />
+  <line x1="22" y1="78" x2="106" y2="78" stroke="#ffffff" stroke-width="2.5" stroke-opacity="0.45" stroke-linecap="round" />
+
+  <!-- Bold modern number "9" inside center cell -->
+  <text x="64" y="70" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="800" fill="#ffffff" text-anchor="middle" dominant-baseline="central">9</text>
+
+  <!-- Accent dots or numbers in corners -->
+  <circle cx="36" cy="36" r="3.5" fill="#ffffff" fill-opacity="0.75" />
+  <circle cx="92" cy="92" r="3.5" fill="#ffffff" fill-opacity="0.75" />
+</svg>

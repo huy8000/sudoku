@@ -13,10 +13,10 @@ const Button = ({children, className, disabled, active, onClick, type = "button"
       type={type}
       className={twMerge(
         clsx(
-          "rounded-sm border-none bg-white dark:text-white dark:bg-gray-500 md:px-4 md:py-2 px-2 py-1 text-black shadow-sm transition-transform hover:brightness-90 focus:outline-none disabled:brightness-75",
+          "rounded-xl border border-stone-200/80 dark:border-zinc-700/80 bg-white dark:bg-zinc-800 text-stone-800 dark:text-zinc-100 font-medium md:px-4 md:py-2 px-3 py-1.5 shadow-xs transition-all duration-150 hover:bg-stone-50 dark:hover:bg-zinc-700/80 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-teal-500/30 disabled:opacity-40 disabled:pointer-events-none disabled:active:scale-100",
           className,
           {
-            "scale-110 brightness-90": active,
+            "ring-2 ring-teal-500 scale-105 shadow-sm": active,
           },
         ),
       )}

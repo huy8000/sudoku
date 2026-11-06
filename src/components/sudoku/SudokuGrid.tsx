@@ -8,11 +8,11 @@ export const GridLineX = ({top, width, makeBold}: {top: number; width: number; m
       style={{
         width: `${width}%`,
         top: `${top}%`,
-        height: makeBold ? 2 : 1,
+        height: makeBold ? 2.5 : 1,
       }}
-      className={clsx("absolute left-0 -translate-y-1/2", {
-        "z-10 bg-gray-400 dark:bg-gray-500": makeBold,
-        "z-10 bg-gray-300 dark:bg-gray-600": !makeBold,
+      className={clsx("absolute left-0 -translate-y-1/2 pointer-events-none transition-colors", {
+        "z-10 bg-stone-800 dark:bg-zinc-200": makeBold,
+        "z-10 bg-stone-200/90 dark:bg-zinc-700/60": !makeBold,
       })}
     />
   );
@@ -24,11 +24,11 @@ export const GridLineY = ({left, height, makeBold}: {left: number; height: numbe
       style={{
         height: `${height}%`,
         left: `${left}%`,
-        width: makeBold ? 2 : 1,
+        width: makeBold ? 2.5 : 1,
       }}
-      className={clsx("absolute left-0 -translate-x-1/2", {
-        "z-10 bg-gray-400 dark:bg-gray-500": makeBold,
-        "z-10 bg-gray-300 dark:bg-gray-600": !makeBold,
+      className={clsx("absolute top-0 -translate-x-1/2 pointer-events-none transition-colors", {
+        "z-10 bg-stone-800 dark:bg-zinc-200": makeBold,
+        "z-10 bg-stone-200/90 dark:bg-zinc-700/60": !makeBold,
       })}
     />
   );
@@ -38,7 +38,7 @@ export const CellNote = ({left, top, children}: {left: number; top: number; chil
   return (
     <div
       style={{top: `${top}%`, left: `${left}%`}}
-      className="absolute -translate-x-1/2 -translate-y-1/2 text-xs text-sky-400 sm:text-sm"
+      className="absolute -translate-x-1/2 -translate-y-1/2 text-[10px] sm:text-xs font-medium text-stone-500 dark:text-zinc-400 select-none leading-none"
     >
       {children}
     </div>
@@ -65,7 +65,7 @@ export const CellNoteContainer = ({
         top: `${bounds.top}%`,
         left: `${bounds.left}%`,
       }}
-      className={clsx("pointer-events-none absolute", {
+      className={clsx("pointer-events-none absolute z-10", {
         "font-bold": initial,
       })}
     >
@@ -101,23 +101,27 @@ export const GridCell = ({
   onClick: () => void;
   onRightClick: () => void;
 }) => {
-  let backgroundColor = "bg-white dark:bg-gray-800";
+  let backgroundColor = "bg-white dark:bg-zinc-900";
   if (highlight) {
-    backgroundColor = "bg-gray-200 dark:bg-gray-700";
+    backgroundColor = "bg-stone-100/90 dark:bg-zinc-800/60";
   }
   if (highlightNumber) {
-    backgroundColor = "bg-gray-300 dark:bg-gray-600";
+    backgroundColor = "bg-teal-100/60 dark:bg-teal-900/40";
   }
   if (conflict) {
-    backgroundColor = "bg-red-200 dark:bg-red-900";
+    backgroundColor = "bg-red-100/80 dark:bg-red-950/50";
+  }
+  if (active) {
+    backgroundColor = notesMode
+      ? "bg-sky-500/20 dark:bg-sky-400/25"
+      : "bg-teal-500/20 dark:bg-teal-400/25";
   }
 
   let borderColor = "border-transparent";
   if (active) {
-    borderColor = "border-teal-400 dark:border-teal-600";
-    if (notesMode) {
-      borderColor = "border-sky-400 dark:border-sky-600";
-    }
+    borderColor = notesMode
+      ? "border-sky-500 dark:border-sky-400 ring-2 ring-sky-400/30 ring-inset"
+      : "border-teal-600 dark:border-teal-400 ring-2 ring-teal-500/30 ring-inset";
   }
 
   const dimensions = {
@@ -148,11 +152,15 @@ export const GridCell = ({
           onRightClick();
         }}
         style={dimensions}
-        className={clsx("absolute z-20 border-2", borderColor)}
+        className={clsx(
+          "absolute z-20 border-2 transition-all duration-100 cursor-pointer",
+          borderColor,
+          !active && "hover:bg-stone-200/40 dark:hover:bg-zinc-700/30",
+        )}
       />
       <div
         style={dimensions}
-        className={clsx("absolute z-0 transition-colors duration-0 hover:bg-opacity-50", backgroundColor)}
+        className={clsx("absolute z-0 transition-colors duration-100", backgroundColor)}
       />
     </>
   );
@@ -165,7 +173,6 @@ export const GridCellNumber = ({
   top,
   children,
   testId,
-  // TODO: distinguish between wrong and conflicted.
   conflict,
 }: {
   initial: boolean;
@@ -183,12 +190,15 @@ export const GridCellNumber = ({
         left: `${left}%`,
         top: `${top}%`,
       }}
-      className={clsx("pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-1/2 text-lg font-bold", {
-        "text-black dark:text-white": initial,
-        "text-amber-600": highlight && !conflict,
-        "text-teal-600": !initial && !highlight && !conflict,
-        "text-red-600 dark:text-red-300": conflict && !initial,
-      })}
+      className={clsx(
+        "pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-1/2 font-sans select-none transition-colors",
+        initial ? "text-xl sm:text-2xl font-bold text-stone-900 dark:text-zinc-50" : "text-xl sm:text-2xl font-semibold",
+        {
+          "text-teal-700 dark:text-teal-300 font-bold": highlight && !conflict && !initial,
+          "text-teal-600 dark:text-teal-400": !initial && !highlight && !conflict,
+          "text-red-600 dark:text-red-400 font-bold": conflict && !initial,
+        },
+      )}
     >
       {children}
     </div>

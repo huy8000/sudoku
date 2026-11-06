@@ -136,6 +136,8 @@ interface SudokuProps {
   setNumber: (cell: Cell, number: number) => void;
   setNotes: (cell: Cell, notes: number[]) => void;
   clearNumber: (cell: Cell) => void;
+  showOccurrences?: boolean;
+  toggleNotesMode?: () => void;
   children: React.ReactNode;
 }
 
@@ -149,6 +151,8 @@ export const Sudoku: React.FC<SudokuProps> = ({
   setNumber,
   setNotes,
   clearNumber,
+  showOccurrences,
+  toggleNotesMode,
   children,
   showConflicts,
   showWrongEntries,
@@ -200,9 +204,14 @@ export const Sudoku: React.FC<SudokuProps> = ({
   }, [activeCell, hideMenu]);
 
   return (
-    <div className="relative" data-testid="sudoku-board" ref={sudokuContainerRef} style={{height: containerWidth}}>
+    <div
+      className="relative rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 border-2 border-stone-800 dark:border-zinc-300 shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] transition-all"
+      data-testid="sudoku-board"
+      ref={sudokuContainerRef}
+      style={{height: containerWidth}}
+    >
       {children}
-      <div className="absolute h-full w-full rounded-sm">
+      <div className="absolute h-full w-full">
         <SudokuGrid width={width} height={height} hideLeftRight />
         {sudoku.map((c, i) => {
           const onClick = () => {
@@ -277,11 +286,14 @@ export const Sudoku: React.FC<SudokuProps> = ({
                 cell={activeCell}
                 notesMode={notesMode}
                 showHints={showHints}
+                showOccurrences={showOccurrences}
                 setNumber={setNumber}
                 setNotes={setNotes}
                 clearNumber={clearNumber}
                 sudoku={sudoku}
                 showMenu={showMenu}
+                hideMenu={hideMenu}
+                toggleNotesMode={toggleNotesMode}
               />
             </MenuWrapper>
           </MenuContainer>

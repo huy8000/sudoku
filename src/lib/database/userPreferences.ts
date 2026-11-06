@@ -12,7 +12,7 @@ export const DEFAULT_USER_PREFERENCES: UserPreferences = {
   showHints: false,
   showWrongEntries: false,
   showConflicts: true,
-  showCircleMenu: true,
+  showCircleMenu: false,
   showOccurrences: false,
 };
 
@@ -36,6 +36,25 @@ export const localStorageUserPreferencesRepository: UserPreferencesRepository = 
     try {
       const parsed = JSON.parse(storedPreferences);
 
+      // If user had legacy preferences saved before circle menu was disabled by default,
+      // migrate showCircleMenu to false unless they have explicitly saved preference with circleMenuMigrated
+      if (parsed.circleMenuMigrated !== true) {
+        const migrated: UserPreferences = {
+          ...DEFAULT_USER_PREFERENCES,
+          ...parsed,
+          showCircleMenu: false,
+        };
+        try {
+          localStorage.setItem(
+            STORAGE_KEY_USER_PREFERENCES,
+            JSON.stringify({...migrated, circleMenuMigrated: true}),
+          );
+        } catch {
+          // ignore error
+        }
+        return migrated;
+      }
+
       // Merge with defaults to handle cases where new preferences are added
       return {
         ...DEFAULT_USER_PREFERENCES,
@@ -53,7 +72,10 @@ export const localStorageUserPreferencesRepository: UserPreferencesRepository = 
     }
 
     try {
-      localStorage.setItem(STORAGE_KEY_USER_PREFERENCES, JSON.stringify(preferences));
+      localStorage.setItem(
+        STORAGE_KEY_USER_PREFERENCES,
+        JSON.stringify({...preferences, circleMenuMigrated: true}),
+      );
     } catch (error) {
       console.warn("Failed to save user preferences to localStorage:", error);
     }
