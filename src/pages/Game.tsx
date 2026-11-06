@@ -547,7 +547,9 @@ const GameInner: React.FC<{
             showConflicts={userPreferencesState.showConflicts && game.state === GameStateMachine.running}
             notesMode={game.notesMode}
             shouldShowMenu={
-              game.showMenu && game.state === GameStateMachine.running
+              userPreferencesState.showCircleMenu &&
+              game.showMenu &&
+              game.state === GameStateMachine.running
             }
             sudoku={game.state === GameStateMachine.paused ? emptyGrid : sudoku}
             showMenu={showMenu}
@@ -587,6 +589,21 @@ const GameInner: React.FC<{
             <CenteredContinueButton visible={pausedGame && !game.won} onClick={continueGame} />
           </Sudoku>
         </main>
+
+        {/* Fallback persistent numbers only when floating circle menu is disabled */}
+        {!userPreferencesState.showCircleMenu && (
+          <div className="w-full mt-3">
+            <SudokuMenuNumbers
+              notesMode={game.notesMode}
+              showOccurrences={userPreferencesState.showOccurrences}
+              activeCell={game.activeCellCoordinates}
+              sudoku={sudokuState.current}
+              showHints={userPreferencesState.showHints}
+              setNumber={setNumber}
+              setNotes={setNotes}
+            />
+          </div>
+        )}
 
         {/* Action Controls - Cleanly centered beneath board */}
         <div className="w-full">

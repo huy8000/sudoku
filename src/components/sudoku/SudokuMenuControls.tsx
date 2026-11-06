@@ -125,7 +125,7 @@ const SudokuMenuControls: React.FC<{
   undo,
 }) => {
   return (
-    <div className="grid w-full grid-cols-4 gap-2.5">
+    <div className="grid w-full grid-cols-4 gap-2.5" onClick={(e) => e.stopPropagation()}>
       <UndoButton canUndo={canUndo} undo={undo} />
       <EraseButton activeCellCoordinates={activeCellCoordinates} clearCell={clearCell} />
       <NotesButton
