@@ -87,6 +87,11 @@ async function expectStoredPreferences(page: Page, preferences: Record<string, b
 
 test.beforeEach(async ({context}) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"], {origin: "http://127.0.0.1:4173"});
+  await context.addInitScript(() => {
+    if (!localStorage.getItem("language")) {
+      localStorage.setItem("language", "en");
+    }
+  });
 });
 
 test("supports number entry, erase, undo, redo, notes, hints, and keyboard shortcuts", async ({page}) => {

@@ -169,9 +169,6 @@ const MenuCircle: React.FC<SudokuMenuCircleProps> = ({
                   } else {
                     setNumber(cell, number);
                   }
-                  if (hideMenu) {
-                    hideMenu();
-                  }
                 }
               }}
               className={`h-10 rounded-xl font-bold font-mono text-base flex items-center justify-center transition-all cursor-pointer relative ${
