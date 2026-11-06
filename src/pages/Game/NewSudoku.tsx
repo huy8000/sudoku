@@ -9,6 +9,7 @@ import {solve} from "src/lib/engine/solverAC3";
 import {Cell, CellCoordinates, SimpleSudoku} from "src/lib/engine/types";
 import {cellsToSimpleSudoku, SUDOKU_COORDINATES, SUDOKU_NUMBERS} from "src/lib/engine/utility";
 import {useSudokuUniqueWorker} from "src/utils/useSudokuUniqueWorker";
+import {useTranslation} from "react-i18next";
 
 const SHORTCUT_SCOPE = "new-sudoku";
 
@@ -146,6 +147,7 @@ const GridShortcuts: React.FC<{
 };
 
 const NewSudokuInner = ({saveSudoku}: {saveSudoku: (sudoku: SimpleSudoku) => Promise<void>}) => {
+  const {t} = useTranslation();
   const {state: sudokuState, setNumber, clearNumber, undo, redo} = useSudoku();
   const canUndo = sudokuState.history.length > 1;
   const [activeCell, setActiveCell] = React.useState<CellCoordinates | undefined>(undefined);
@@ -234,7 +236,7 @@ const NewSudokuInner = ({saveSudoku}: {saveSudoku: (sudoku: SimpleSudoku) => Pro
             className="bg-teal-600 dark:bg-teal-600 text-white"
             onClick={saveSudokuLocal}
           >
-            {isSaving ? "保存中..." : isChecking ? "检查唯一解中..." : "保存数独"}
+            {isSaving ? t("saving") : isChecking ? t("checking_uniqueness") : t("save_sudoku")}
           </Button>
           {errors.length > 0 && (
             <ul className="text-red-200 mt-2 bg-red-800 p-2 rounded-sm list-disc list-inside pl-4">

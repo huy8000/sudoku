@@ -66,5 +66,8 @@
   "copied": "已复制",
   "confirm": "确定",
   "cancel": "取消",
-  "restart_completed_confirm": "确定要重新开始这个数独吗？这将重置计时器，但依然会记录你已通关。"
+  "restart_completed_confirm": "确定要重新开始这个数独吗？这将重置计时器，但依然会记录你已通关。",
+  "save_sudoku": "保存数独",
+  "saving": "保存中...",
+  "checking_uniqueness": "检查唯一解中..."
 }

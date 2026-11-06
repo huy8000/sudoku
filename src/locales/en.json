@@ -66,5 +66,8 @@
   "copied" : "Copied",
   "confirm": "Confirm",
   "cancel": "Cancel",
-  "restart_completed_confirm": "Are you sure? This will restart the sudoku and reset the timer. It will continue to say that you solved it."
+  "restart_completed_confirm": "Are you sure? This will restart the sudoku and reset the timer. It will continue to say that you solved it.",
+  "save_sudoku": "Save sudoku",
+  "saving": "Saving...",
+  "checking_uniqueness": "Checking uniqueness..."
 }
