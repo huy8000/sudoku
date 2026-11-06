@@ -1,20 +1,23 @@
-# Super Sudoku 🧩
+# 数独 · Sudoku 🧩
 
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://sudoku.tn1ck.com)
+> 基于 [TN1ck/super-sudoku](https://github.com/TN1ck/super-sudoku) 适配，集成至 [heyhuyu.com](https://heyhuyu.com)。
+
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D20-brightgreen.svg)](https://nodejs.org/)
 
-**A feature-rich, open-source Sudoku game that rivals commercial applications**
+🎮 **在线体验**：[https://heyhuyu.com/sudoku/](https://heyhuyu.com/sudoku/)
 
-🌐 **Live Demo**: [https://sudoku.tn1ck.com](https://sudoku.tn1ck.com)
+## ✨ 本地适配特性
 
-![Screenshot of the sudoku app](./docs/screenshot-app-2025-06-24.png)
+- 🎨 **视觉风格统一**：采用 `heyhuyu.com` 经典暖色纸质基调（`#faf8ef`），搭配深色墨黑与柔和边框，提供深色模式切换。
+- 🇨🇳 **全面中文本土化**：默认中文界面（可自由切换其他 6 种语言），文案自然精准。
+- ⚡ **零外链极速加载**：移除第三方 Google Fonts CDN 依赖，换用现代系统字阶（Inter / PingFang SC），国内访问秒开。
+- 📱 **多端自适应 & PWA**：支持键盘快捷键、桌面圆形菜单与移动端触摸直选，离线独立运行。
+- 🔙 **无缝导航**：内置返回 `heyhuyu` 游戏列表的快捷导航。
 
-## ✨ Why Super Sudoku?
+---
 
-Born from a simple request - my Grandma wanted to play Sudoku, but I wasn't satisfied with the available options. This project aims to create an open-source Sudoku experience that matches or exceeds commercial applications, making quality puzzle gaming accessible to everyone.
-
-## 🚀 Key Features
+## 🚀 原项目核心特性
 
 ### 🎮 **Core Gameplay**
 - **3000 Puzzles**: Carefully created puzzles across 5 difficulty levels

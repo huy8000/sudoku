@@ -16,8 +16,8 @@ import {useTranslation} from "react-i18next";
 
 const TabItem = ({active, children, ...props}: React.ButtonHTMLAttributes<HTMLButtonElement> & {active: boolean}) => (
   <button
-    className={`px-1 xs:px-2 sm:px-4 text-xs sm:text-sm md:text-base py-2 pointer capitalize rounded-sm border-none hover:bg-gray-500 ${
-      active ? "bg-white text-black dark:bg-gray-600 dark:text-white" : "bg-transparent text-white dark:text-gray-300"
+    className={`px-1 xs:px-2 sm:px-4 text-xs sm:text-sm md:text-base py-2 pointer capitalize rounded-sm border-none hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors ${
+      active ? "bg-white text-black shadow-sm dark:bg-gray-600 dark:text-white" : "bg-transparent text-gray-700 dark:text-gray-300"
     }`}
     {...props}
   >
@@ -139,22 +139,24 @@ const SudokuToSelect = ({
   return (
     <div className="relative" ref={sudokuContainerRef}>
       {unfinished || finished ? (
-        <div className="pointer-events-none absolute left-2 rounded-sm bottom-2 z-10 max-w-min bg-gray-900 px-2 py-1 text-xs text-white md:text-base">
+        <div className="pointer-events-none absolute left-2 rounded-sm bottom-2 z-10 max-w-min bg-gray-900/90 dark:bg-gray-900/95 backdrop-blur-sm px-2 py-1 text-xs text-white md:text-base">
           <div>
             <div className="whitespace-nowrap">{`
               ${unfinished ? t("play_time") : t("last_time")}
               ${formatDuration(localSudoku.game.secondsPlayed)}
             `}</div>
             {localSudoku.game.previousTimes.length > 0 && (
-              <div className="whitespace-nowrap">{`Best time: ${formatDuration(
-                Math.min(...localSudoku.game.previousTimes),
-              )}`}</div>
+              <div className="whitespace-nowrap">{t("best_time", {
+                time: formatDuration(Math.min(...localSudoku.game.previousTimes)),
+              })}</div>
             )}
             {localSudoku.game.timesSolved > 0 && (
-              <div>{`Solved ${localSudoku.game.timesSolved} ${localSudoku.game.timesSolved === 1 ? "time" : "times"}`}</div>
+              <div>{t(localSudoku.game.timesSolved === 1 ? "solved_time" : "solved_times", {
+                count: localSudoku.game.timesSolved,
+              })}</div>
             )}
             {unfinished && <div>{t("continue")}</div>}
-            {finished && <div>{`Restart?`}</div>}
+            {finished && <div>{t("restart?")}</div>}
           </div>
         </div>
       ) : null}
@@ -191,7 +193,7 @@ const GameIndex = ({
   const {t} = useTranslation();
 
   if (pageSudokus.length === 0) {
-    return <div className="text-center text-white">{t("no_sudokus_in_collection")}</div>;
+    return <div className="text-center text-gray-700 dark:text-gray-300">{t("no_sudokus_in_collection")}</div>;
   }
 
   return (
@@ -310,12 +312,12 @@ const GameSelect: React.FC = () => {
         </div>
       )}
       {!isBaseCollectionLocal && showNewSudokuComponent && (
-        <div className="mb-4 p-4 bg-gray-900 rounded-sm border border-gray-700 flex flex-col gap-4">
+        <div className="mb-4 p-4 bg-white dark:bg-gray-900 rounded-sm border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col gap-4">
           <div className="flex justify-between items-center">
-            <div className="text-white text-lg sm:text-2xl font-bold">{t("create_new_sudoku")}</div>
+            <div className="text-gray-900 dark:text-white text-lg sm:text-2xl font-bold">{t("create_new_sudoku")}</div>
             <Button onClick={() => setShowNewSudokuComponent(false)}>{t("close")}</Button>
           </div>
-          <p className="text-white">{t("add_your_own_sudoku", {collection: activeCollection.name})}</p>
+          <p className="text-gray-600 dark:text-gray-300">{t("add_your_own_sudoku", {collection: activeCollection.name})}</p>
           <NewSudoku saveSudoku={saveSudoku} />
         </div>
       )}

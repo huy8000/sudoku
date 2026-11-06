@@ -234,7 +234,7 @@ const NewSudokuInner = ({saveSudoku}: {saveSudoku: (sudoku: SimpleSudoku) => Pro
             className="bg-teal-600 dark:bg-teal-600 text-white"
             onClick={saveSudokuLocal}
           >
-            {isSaving ? "Saving..." : isChecking ? "Checking uniqueness..." : "Save sudoku"}
+            {isSaving ? "保存中..." : isChecking ? "检查唯一解中..." : "保存数独"}
           </Button>
           {errors.length > 0 && (
             <ul className="text-red-200 mt-2 bg-red-800 p-2 rounded-sm list-disc list-inside pl-4">

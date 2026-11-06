@@ -222,7 +222,7 @@ const ShareButton: React.FC<{
   return (
     <button
       aria-label={t("share")}
-      className="text-white hover:cursor-pointer p-1 hover:bg-gray-500 rounded-md border-none bg-transparent"
+      className="text-gray-700 dark:text-white hover:cursor-pointer p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md border-none bg-transparent transition-colors"
       data-testid="share-sudoku"
       onClick={handleShare}
       type="button"
@@ -247,7 +247,7 @@ const CenteredContinueButton: React.FC<{visible: boolean; onClick: () => void}> 
 );
 
 const DifficultyShow = ({children, ...props}: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className="text-white capitalize" {...props}>
+  <div className="text-gray-800 dark:text-white font-medium capitalize" {...props}>
     {children}
   </div>
 );
@@ -315,12 +315,12 @@ const SettingsAndInformation = () => {
   const {t} = useTranslation();
 
   return (
-    <div className="text-white">
+    <div className="text-gray-800 dark:text-gray-100">
       <div className="grid gap-4">
         <div className="md:block hidden">
-          <h2 className="mb-2 text-3xl font-bold">{t("shortcuts")}</h2>
+          <h2 className="mb-2 text-3xl font-bold text-gray-900 dark:text-white">{t("shortcuts")}</h2>
           <div className="grid gap-2">
-            <ul className="list-disc pl-6">
+            <ul className="list-disc pl-6 text-gray-700 dark:text-gray-300">
               <li>{t("arrow_keys")}</li>
               <li>{t("number_keys")}</li>
               <li>{t("backspace")}</li>
@@ -334,8 +334,8 @@ const SettingsAndInformation = () => {
           </div>
         </div>
         <div>
-          <h2 className="mb-2 text-3xl font-bold">{t("settings")}</h2>
-          <div className="grid gap-2">
+          <h2 className="mb-2 text-3xl font-bold text-gray-900 dark:text-white">{t("settings")}</h2>
+          <div className="grid gap-2 text-gray-700 dark:text-gray-300">
             <Checkbox id="generated_notes" checked={state.showHints} onChange={toggleShowHints}>
               {t("show_auto_notes")}
             </Checkbox>
@@ -354,8 +354,8 @@ const SettingsAndInformation = () => {
           </div>
         </div>
         <div>
-          <h2 className="text-3xl font-bold text-white">{t("about")}</h2>
-          <p className="text-white">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">{t("about")}</h2>
+          <p className="text-gray-600 dark:text-gray-300">
             {t("about_text")}{" "}
             <a target="_blank" className="underline" href="https://github.com/TN1ck/super-sudoku" rel="noreferrer">
               Github
@@ -499,15 +499,22 @@ const GameInner: React.FC<{
           copyNotes={copyNotes}
         />
         <header className="flex justify-between sm:items-center mt-4">
-          <div className="flex text-white flex-col sm:flex-row sm:justify-end sm:items-center gap-2">
+          <div className="flex text-gray-800 dark:text-white flex-col sm:flex-row sm:justify-end sm:items-center gap-2">
+            <a
+              href="/games/"
+              className="inline-flex items-center gap-1 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-teal-700 dark:hover:text-teal-400 transition-colors mr-1"
+              title="返回游戏列表"
+            >
+              ← heyhuyu
+            </a>
             <div className="flex gap-2 items-center">
               <DifficultyShow data-testid="current-game-label">{`${collectionName} #${game.sudokuIndex + 1}`}</DifficultyShow>
               <ShareButton gameState={game} sudokuState={sudokuState} />
             </div>
-            <div className="hidden sm:block">{"|"}</div>
+            <div className="hidden sm:block text-gray-400 dark:text-gray-600">{"|"}</div>
             <GameTimer />
           </div>
-          <div className="text-white text-lg sm:text-2xl font-bold flex items-center gap-2">{t("super_sudoku")}</div>
+          <div className="text-gray-900 dark:text-white text-lg sm:text-2xl font-bold flex items-center gap-2">{t("super_sudoku")}</div>
           <div className="flex">
             <div className="flex gap-2 flex-col justify-end items-end sm:flex-row">
               <div className="flex gap-2">

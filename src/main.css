@@ -3,7 +3,9 @@
 @import "tailwindcss/utilities";
 
 body {
-  @apply bg-gray-800 dark:bg-gray-900;
+  @apply bg-[#faf8ef] dark:bg-[#12181b] text-[#1b252c] dark:text-gray-100;
+  transition: color 0.2s ease, background-color 0.2s ease;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
 html, body, #root {

@@ -1,8 +1,9 @@
 {
-  "name": "super-sudoku",
+  "name": "sudoku",
   "version": "0.1.0",
+  "homepage": "https://heyhuyu.com/sudoku/",
   "type": "module",
-  "description": "Super Sudoku",
+  "description": "Sudoku adapted for heyhuyu.com",
   "license": "MIT",
   "node": "24.3.1",
   "scripts": {

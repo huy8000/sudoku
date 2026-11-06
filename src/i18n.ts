@@ -30,16 +30,13 @@ export const LANGUAGE_TRANSLATIONS: Record<Language, string> = {
 
 export const LANGUAGES = [Language.EN, Language.FR, Language.ES, Language.DE, Language.IT, Language.PT, Language.ZH];
 
-// Detect browser language and return a supported language
+// Detect browser language and return a supported language, defaulting to Chinese
 const getBrowserLanguage = (): Language => {
   const savedLang = localStorage.getItem("language");
   if (savedLang && Object.values(Language).includes(savedLang as Language)) {
     return savedLang as Language;
   }
-
-  const browserLang = navigator.language.split("-")[0].toLowerCase();
-  const supportedLang = Object.values(Language).find((lang) => lang === browserLang);
-  return supportedLang || Language.EN;
+  return Language.ZH;
 };
 
 i18n.use(initReactI18next).init({
@@ -53,7 +50,7 @@ i18n.use(initReactI18next).init({
     [Language.ZH]: {translation: zh},
   },
   lng: getBrowserLanguage(),
-  fallbackLng: Language.EN,
+  fallbackLng: Language.ZH,
   interpolation: {escapeValue: false},
 });
 

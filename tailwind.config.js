@@ -8,7 +8,17 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Source Sans Pro", "sans-serif"],
+        sans: [
+          "Inter",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          '"Segoe UI"',
+          "Roboto",
+          '"PingFang SC"',
+          '"Hiragino Sans GB"',
+          '"Microsoft YaHei"',
+          "sans-serif",
+        ],
       },
       screens: {
         xs: "380px",
