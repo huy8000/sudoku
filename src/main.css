@@ -2,6 +2,10 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+:root {
+  color-scheme: light dark;
+}
+
 body {
   @apply bg-[#fbfaf7] dark:bg-[#12161a] text-[#1c2228] dark:text-[#f1f5f9] antialiased selection:bg-teal-500 selection:text-white;
   transition: color 0.2s ease, background-color 0.2s ease;

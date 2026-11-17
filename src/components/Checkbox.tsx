@@ -16,9 +16,6 @@ const Checkbox: React.FC<{
           checked={checked}
           onChange={(e) => {
             onChange(e.target.checked);
-            if (document.activeElement instanceof HTMLElement) {
-              document.activeElement.blur();
-            }
           }}
           id={id}
           aria-describedby={`${id}-description`}

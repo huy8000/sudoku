@@ -5,7 +5,7 @@ import {formatDuration} from "src/utils/format";
 const GameTimer: React.FC = () => {
   const {displayTime} = useTimer();
 
-  return <div>{formatDuration(displayTime)}</div>;
+  return <time dateTime={`PT${Math.floor(displayTime)}S`}>{formatDuration(displayTime)}</time>;
 };
 
 export default GameTimer;

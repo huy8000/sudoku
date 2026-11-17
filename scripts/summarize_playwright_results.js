@@ -42,9 +42,9 @@ function resultsInstructions() {
 }
 
 function failureMessage(test) {
-  const failedResult = [...(test.results ?? [])]
-    .reverse()
-    .find((result) => ["failed", "timedOut", "interrupted"].includes(result.status));
+  const failedResult = (test.results ?? []).findLast((result) =>
+    ["failed", "timedOut", "interrupted"].includes(result.status),
+  );
   const errors =
     failedResult?.errors?.length > 0 ? failedResult.errors : failedResult?.error ? [failedResult.error] : [];
   const firstError = errors.find(Boolean);

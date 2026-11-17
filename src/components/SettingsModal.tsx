@@ -71,9 +71,17 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({isOpen, onClose}) =
         </div>
 
         {/* Tab navigation */}
-        <div className="flex border-b border-stone-200/70 dark:border-zinc-800 px-6 bg-stone-100/40 dark:bg-zinc-850/40 text-sm font-medium">
+        <div
+          role="tablist"
+          aria-label={t("settings")}
+          className="flex border-b border-stone-200/70 dark:border-zinc-800 px-6 bg-stone-100/40 dark:bg-zinc-850/40 text-sm font-medium"
+        >
           <button
             type="button"
+            role="tab"
+            id="tab-settings"
+            aria-selected={activeTab === "settings"}
+            aria-controls="tabpanel-settings"
             onClick={() => setActiveTab("settings")}
             className={clsx("py-3 px-4 border-b-2 transition-colors", {
               "border-teal-600 text-teal-700 dark:text-teal-400 dark:border-teal-400 font-semibold":
@@ -86,6 +94,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({isOpen, onClose}) =
           </button>
           <button
             type="button"
+            role="tab"
+            id="tab-shortcuts"
+            aria-selected={activeTab === "shortcuts"}
+            aria-controls="tabpanel-shortcuts"
             onClick={() => setActiveTab("shortcuts")}
             className={clsx("py-3 px-4 border-b-2 transition-colors", {
               "border-teal-600 text-teal-700 dark:text-teal-400 dark:border-teal-400 font-semibold":
@@ -98,6 +110,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({isOpen, onClose}) =
           </button>
           <button
             type="button"
+            role="tab"
+            id="tab-about"
+            aria-selected={activeTab === "about"}
+            aria-controls="tabpanel-about"
             onClick={() => setActiveTab("about")}
             className={clsx("py-3 px-4 border-b-2 transition-colors", {
               "border-teal-600 text-teal-700 dark:text-teal-400 dark:border-teal-400 font-semibold":
@@ -113,7 +129,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({isOpen, onClose}) =
         {/* Tab contents */}
         <div className="p-6 overflow-y-auto space-y-6">
           {activeTab === "settings" && (
-            <div className="space-y-6">
+            <div
+              role="tabpanel"
+              id="tabpanel-settings"
+              aria-labelledby="tab-settings"
+              className="space-y-6"
+            >
               {/* Game rules & helpers */}
               <div>
                 <h3 className="text-xs font-bold uppercase tracking-wider text-stone-400 dark:text-zinc-500 mb-3">
@@ -162,7 +183,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({isOpen, onClose}) =
           )}
 
           {activeTab === "shortcuts" && (
-            <div>
+            <div
+              role="tabpanel"
+              id="tabpanel-shortcuts"
+              aria-labelledby="tab-shortcuts"
+            >
               <div className="grid gap-2">
                 {[
                   {label: t("arrow_keys"), keys: ["↑", "↓", "←", "→"]},
@@ -197,7 +222,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({isOpen, onClose}) =
           )}
 
           {activeTab === "about" && (
-            <div className="space-y-4 text-sm text-stone-600 dark:text-zinc-300 leading-relaxed p-2">
+            <div
+              role="tabpanel"
+              id="tabpanel-about"
+              aria-labelledby="tab-about"
+              className="space-y-4 text-sm text-stone-600 dark:text-zinc-300 leading-relaxed p-2"
+            >
               <p>
                 {t("about_text")}{" "}
                 <a

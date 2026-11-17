@@ -16,8 +16,14 @@ export const DarkModeButton = () => {
   useEffect(() => {
     if (darkMode) {
       document.body.classList.add("dark");
+      document.documentElement.classList.add("dark");
     } else {
       document.body.classList.remove("dark");
+      document.documentElement.classList.remove("dark");
+    }
+    const meta = document.querySelector('meta[name="color-scheme"]');
+    if (meta) {
+      meta.setAttribute("content", darkMode ? "dark" : "light");
     }
     if (typeof localStorage !== "undefined") {
       localStorage.setItem("darkMode", JSON.stringify(darkMode));
@@ -27,10 +33,9 @@ export const DarkModeButton = () => {
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     const handleChange = (e: MediaQueryListEvent) => {
-      const newMode = e.matches;
-      setDarkMode(newMode);
-      if (typeof localStorage !== "undefined") {
-        localStorage.setItem("darkMode", JSON.stringify(newMode));
+      // Only follow system changes if the user hasn't explicitly set a stored preference
+      if (typeof localStorage !== "undefined" && localStorage.getItem("darkMode") === null) {
+        setDarkMode(e.matches);
       }
     };
     mediaQuery.addEventListener("change", handleChange);

@@ -13,7 +13,6 @@ import SudokuGame from "src/lib/game/SudokuGame";
 import {Bounds} from "src/components/sudoku/types";
 import {Cell, CellCoordinates} from "src/lib/engine/types";
 import flatten from "lodash-es/flatten";
-import {useElementWidth} from "src/utils/hooks";
 
 const SudokuGrid = React.memo(
   ({width, height, hideLeftRight = false}: {width: number; height: number; hideLeftRight?: boolean}) => {
@@ -189,9 +188,6 @@ export const Sudoku: React.FC<SudokuProps> = ({
 
   const friendsOfActiveCell = activeCell ? SudokuGame.sameSquareColumnRow(activeCell, sudoku) : [];
 
-  const sudokuContainerRef = React.useRef(null);
-  const containerWidth = useElementWidth(sudokuContainerRef);
-
   React.useEffect(() => {
     const handleClick = () => {
       if (activeCell !== null) {
@@ -205,10 +201,8 @@ export const Sudoku: React.FC<SudokuProps> = ({
 
   return (
     <div
-      className="relative rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 border-2 border-stone-800 dark:border-zinc-300 shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] transition-all"
+      className="relative rounded-2xl overflow-hidden aspect-square w-full bg-white dark:bg-zinc-900 border-2 border-stone-800 dark:border-zinc-300 shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] transition-all"
       data-testid="sudoku-board"
-      ref={sudokuContainerRef}
-      style={{height: containerWidth}}
     >
       {children}
       <div className="absolute h-full w-full">

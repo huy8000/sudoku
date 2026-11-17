@@ -20,12 +20,8 @@ export const SUDOKU_NUMBERS = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 square = _y * 3 + _x;
 */
 export const SQUARE_TABLE = (function () {
-  const cells: Array<[number, number]> = ([] as Array<[number, number]>).concat(
-    ...SUDOKU_COORDINATES.map((x) => {
-      return SUDOKU_COORDINATES.map((y) => {
-        return [x, y] as [number, number];
-      });
-    }),
+  const cells: Array<[number, number]> = SUDOKU_COORDINATES.flatMap((x) =>
+    SUDOKU_COORDINATES.map((y) => [x, y] as [number, number]),
   );
   const grouped = groupBy(cells, ([x, y]) => {
     return Math.floor(y / 3) * 3 + Math.floor(x / 3);
@@ -42,19 +38,15 @@ export function squareIndex(x: number, y: number): number {
 }
 
 export function simpleSudokuToCells(grid: SimpleSudoku, solution?: SimpleSudoku): Cell[] {
-  return ([] as Cell[]).concat(
-    ...grid.map((row, y) => {
-      return row.map((n, x) => {
-        return {
-          x,
-          y,
-          number: n,
-          notes: [],
-          initial: n !== 0,
-          solution: solution ? solution[y][x] : 0,
-        };
-      });
-    }),
+  return grid.flatMap((row, y) =>
+    row.map((n, x) => ({
+      x,
+      y,
+      number: n,
+      notes: [],
+      initial: n !== 0,
+      solution: solution ? solution[y][x] : 0,
+    })),
   );
 }
 
